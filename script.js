@@ -171,7 +171,7 @@ function createCell(number, hardMode) {
   cell.setAttribute("aria-label", `Number ${number}`);
 
   if (hardMode) {
-    applyHardModeStyle(cell);
+    applyHardModeStyle(cell, number);
   }
 
   cell.addEventListener("click", () => handleCellClick(cell, number));
@@ -241,9 +241,11 @@ function generateShuffledNumbers(size) {
   return nums;
 }
 
-function applyHardModeStyle(cell) {
+function applyHardModeStyle(cell, number) {
   const rotations = [0, 90, 180, 270];
-  const rotation = rotations[Math.floor(Math.random() * rotations.length)];
+  const rotation = number === 6 || number === 9
+    ? 0
+    : rotations[Math.floor(Math.random() * rotations.length)];
   const font = SAFE_FONTS[Math.floor(Math.random() * SAFE_FONTS.length)];
   const color = generateReadableColor();
   cell.style.transform = `rotate(${rotation}deg)`;
