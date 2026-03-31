@@ -23,8 +23,8 @@ body {
 }
 
 .app {
-  width: min(980px, 94vw);
-  margin: 1.2rem auto 2rem;
+  width: min(860px, 94vw);
+  margin: 0.8rem auto 1.4rem;
 }
 
 .top-bar h1 {
@@ -133,7 +133,7 @@ body {
 .grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 0.45rem;
+  gap: clamp(0.3rem, 0.7vw, 0.45rem);
   user-select: none;
 }
 
@@ -145,9 +145,9 @@ body {
   place-items: center;
   /* Keep grid boxes perfectly square while remaining responsive */
   aspect-ratio: 1 / 1;
-  min-height: clamp(40px, 8.2vw, 76px);
+  min-height: clamp(34px, 6.7vw, 62px);
   font-weight: 700;
-  font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+  font-size: clamp(0.82rem, 1.9vw, 1.02rem);
   box-shadow: 0 1px 0 rgba(4, 14, 40, 0.03);
   transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
   -webkit-tap-highlight-color: transparent;
