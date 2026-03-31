@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Number Grid Challenge</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top-bar">
+      <h1>Number Grid Challenge</h1>
+      <p class="subtitle">Tap numbers from 1 to 49 in order before time runs out.</p>
+    </header>
+
+    <section class="status-panel" aria-label="Game status">
+      <div class="status-item">
+        <span class="label">Round</span>
+        <span id="round-value" class="value">1 / 2</span>
+      </div>
+      <div class="status-item">
+        <span class="label">Find</span>
+        <span id="target-value" class="value">1</span>
+      </div>
+      <div class="status-item timer-wrap">
+        <span class="label">Time</span>
+        <span id="timer-value" class="value timer">60</span>
+      </div>
+      <div class="status-item">
+        <span class="label">Best</span>
+        <span id="best-value" class="value">0</span>
+      </div>
+    </section>
+
+    <section class="controls">
+      <button id="start-btn" class="btn btn-primary" type="button">Start Round</button>
+      <button id="restart-btn" class="btn btn-secondary" type="button">Restart Game</button>
+    </section>
+
+    <section class="feedback" aria-live="polite">
+      <p id="message">Press Start to begin Round 1.</p>
+      <p id="round-score"></p>
+    </section>
+
+    <section id="grid" class="grid" aria-label="Number grid"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
