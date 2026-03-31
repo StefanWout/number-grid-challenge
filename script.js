@@ -242,12 +242,19 @@ function generateShuffledNumbers(size) {
 }
 
 function applyHardModeStyle(cell, number) {
+  const isOrientationSensitive = String(number) === "6" || String(number) === "9";
   const rotations = [0, 90, 180, 270];
-  const rotation = number === 6 || number === 9
-    ? 0
-    : rotations[Math.floor(Math.random() * rotations.length)];
   const font = SAFE_FONTS[Math.floor(Math.random() * SAFE_FONTS.length)];
   const color = generateReadableColor();
+
+  if (isOrientationSensitive) {
+    cell.style.transform = "none";
+    cell.style.fontFamily = font;
+    cell.style.color = color;
+    return;
+  }
+
+  const rotation = rotations[Math.floor(Math.random() * rotations.length)];
   cell.style.transform = `rotate(${rotation}deg)`;
   cell.style.fontFamily = font;
   cell.style.color = color;
