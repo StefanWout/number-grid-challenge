@@ -25,6 +25,11 @@ const ui = {
   roundScore: document.getElementById("round-score"),
   bestValue: document.getElementById("best-value"),
   timerWrap: document.querySelector(".timer-wrap"),
+  modalOverlay: document.getElementById("modal-overlay"),
+  modalTitle: document.getElementById("modal-title"),
+  modalContent: document.getElementById("modal-content"),
+  modalClose: document.getElementById("modal-close"),
+  modalNext: document.getElementById("modal-next"),
 };
 
 const state = {
@@ -37,12 +42,15 @@ const state = {
   started: false,
   allowInput: false,
   bestScore: 0,
+  roundTimes: [],
+  activeModal: null,
 };
 
 function initGame() {
   loadBestScore();
   resetWholeGame();
   attachEvents();
+  showIntroCard();
 }
 
 function attachEvents() {
@@ -54,6 +62,16 @@ function attachEvents() {
 
   ui.restartBtn.addEventListener("click", () => {
     resetWholeGame();
+  });
+
+  ui.modalClose.addEventListener("click", () => {
+    closeModal();
+  });
+
+  ui.modalNext.addEventListener("click", () => {
+    if (state.activeModal?.onNext) {
+      state.activeModal.onNext();
+    }
   });
 }
 
@@ -75,6 +93,7 @@ function resetWholeGame() {
   stopTimer();
   state.round = 1;
   state.roundResults = [];
+  state.roundTimes = [];
   prepareRound(1);
   ui.message.textContent = "Press Start to begin Round 1.";
   ui.roundScore.textContent = "";
@@ -94,6 +113,82 @@ function prepareRound(roundNumber) {
   ui.roundValue.textContent = `${roundNumber} / ${TOTAL_ROUNDS}`;
 
   renderGrid(roundNumber === 2);
+}
+
+function openModal(config) {
+  state.activeModal = config;
+  ui.modalTitle.textContent = config.title;
+  ui.modalContent.innerHTML = config.html;
+  ui.modalNext.classList.toggle("hidden", !config.showNext);
+  ui.modalOverlay.classList.remove("hidden");
+}
+
+function closeModal() {
+  ui.modalOverlay.classList.add("hidden");
+  const onClose = state.activeModal?.onClose;
+  state.activeModal = null;
+  if (onClose) {
+    onClose();
+  }
+}
+
+function showIntroCard() {
+  openModal({
+    title: "The Neurodiverse Mind - Barriers to Information Processing",
+    html: `
+      <p><strong>Disclaimer:</strong> This is not an scientific or accurate representation of Neurodiversity.</p>
+      <p>This is a simple test designed to highlight the experience of the neurodiverse minds that may have difficulty processing information due to the challenges in visual processing presented by conditions such as Dyslexia, Dyscalculia, ADHD, ASD, etc.</p>
+    `,
+    showNext: true,
+    onNext: showRoundOneInstructionsCard,
+    onClose: showRoundOneInstructionsCard,
+  });
+}
+
+function showRoundOneInstructionsCard() {
+  openModal({
+    title: "ROUND 1 OF 2",
+    html: `
+      <p><strong>Normal Mode</strong></p>
+      <p>Find the numbers in order from 1 to 49.</p>
+      <p>You have 1 minute. Adjust your screen zoom to get make sure you see the entire grid.</p>
+      <p>Your time starts when you press the start round button.</p>
+    `,
+    showNext: false,
+  });
+}
+
+function showRoundTwoInstructionsCard() {
+  openModal({
+    title: "ROUND 2 OF 2",
+    html: `
+      <p><strong>NeuroSpicy Mode</strong></p>
+      <p>Find the numbers in order from 1 to 49 - this time with a twist.</p>
+      <p>You have 1 minute.</p>
+      <p>Your time starts when you press the start round button.</p>
+    `,
+    showNext: false,
+  });
+}
+
+function formatRoundScore(roundNumber) {
+  const score = state.roundResults[roundNumber - 1];
+  if (!Number.isFinite(score)) {
+    return "N/A";
+  }
+  return String(score);
+}
+
+function showResultsCard() {
+  openModal({
+    title: "Game Results",
+    html: `
+      <p>Highest number reached in Round 1: <strong>${formatRoundScore(1)}</strong></p>
+      <p>Highest number reached in Round 2: <strong>${formatRoundScore(2)}</strong></p>
+      <p>For more information on Neurodiversity visit: <a href="https://www.neurodiversityweek.com/neurodiversity" target="_blank" rel="noopener noreferrer">https://www.neurodiversityweek.com/neurodiversity</a></p>
+    `,
+    showNext: false,
+  });
 }
 
 function startRound() {
@@ -130,17 +225,20 @@ function endRound() {
   stopTimer();
   state.allowInput = false;
   ui.startBtn.disabled = true;
+  const finishedRound = state.round;
 
   const reached = state.maxReachedInRound;
   state.roundResults.push(reached);
+  state.roundTimes.push(ROUND_SECONDS - Math.max(state.timeLeft, 0));
   saveBestScore(reached);
 
   ui.roundScore.textContent = `Round ${state.round} score: ${reached}`;
 
-  if (state.round < TOTAL_ROUNDS) {
-    ui.message.textContent = `Round ${state.round} complete. Starting harder Round 2...`;
+  if (finishedRound < TOTAL_ROUNDS) {
+    ui.message.textContent = `Round ${finishedRound} complete. Starting harder Round 2...`;
+    showRoundTwoInstructionsCard();
     setTimeout(() => {
-      prepareRound(state.round + 1);
+      prepareRound(finishedRound + 1);
       ui.message.textContent = "Round 2 ready. Press Start.";
       ui.startBtn.disabled = false;
     }, 1100);
@@ -149,6 +247,7 @@ function endRound() {
     ui.message.textContent = `Game over. Highest number reached: ${finalBest}.`;
     ui.roundScore.textContent = `Round 1: ${state.roundResults[0] || 0} | Round 2: ${state.roundResults[1] || 0}`;
     ui.startBtn.disabled = true;
+    showResultsCard();
   }
 }
 

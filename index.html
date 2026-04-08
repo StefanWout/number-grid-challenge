@@ -45,6 +45,17 @@
     <section id="grid" class="grid" aria-label="Number grid"></section>
   </main>
 
+  <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <button id="modal-close" class="modal-close" type="button" aria-label="Close">X</button>
+      <h2 id="modal-title" class="modal-title"></h2>
+      <div id="modal-content" class="modal-content"></div>
+      <div class="modal-footer">
+        <button id="modal-next" class="modal-next hidden" type="button" aria-label="Next">→</button>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
